@@ -1,12 +1,19 @@
 import { handleStatus, log } from './utils/promise-helpers.js';
 import './utils/array-helpers.js';
 
+const sumItems = code => notas => 
+    notas
+        .$flatMap(nota => nota.itens)
+        .filter(item => item.codigo == code)
+        .reduce((total, item) => total + item.valor, 0);
+
 document.querySelector('#myButton').onclick = () => 
     fetch('http:///localhost:3000/notas')
     .then(handleStatus)
-    .then(notas => notas.$flatMap(nota => nota.itens))
-    .then(log)
-    .then(itens => itens.filter(item => item.codigo == '2143'))
-    .then(itens => itens.reduce((total, item) => total + item.valor, 0))
-    .then(total => log(total))
+    .then(sumItems('2143'))
+    .then(total => console.log('total', total))
     .catch(err => console.error('Aconteceu um erro:', err))
+
+// const fn = sumItems('2143')
+// fn(notas);
+
