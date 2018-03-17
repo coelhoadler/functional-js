@@ -1,4 +1,6 @@
-import { handleStatus, log } from './utils/promise-helpers.js';
+import { log } from './utils/promise-helpers.js';
+import { notasService as service } from './nota/service.js';
+
 import './utils/array-helpers.js';
 
 const sumItems = code => notas => 
@@ -8,8 +10,8 @@ const sumItems = code => notas =>
         .reduce((total, item) => total + item.valor, 0);
 
 document.querySelector('#myButton').onclick = () => 
-    fetch('http:///localhost:3000/notas')
-    .then(handleStatus)
+    service
+    .listAll()
     .then(sumItems('2143'))
     .then(total => console.log('total', total))
     .catch(err => console.error('Aconteceu um erro:', err))
