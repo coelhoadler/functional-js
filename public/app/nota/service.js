@@ -1,17 +1,11 @@
 import { handleStatus } from '../utils/promise-helpers.js';
-import { partialize } from '../utils/operators.js';
+import { partialize, compose } from '../utils/operators.js';
 
 const API = 'http://localhost:3000/notas';
 
 const getItemsFromNotas = notas => notas.$flatMap(nota => nota.itens);
 const filterItemsByCode = code => items => items.filter(item => item.codigo == code);
 const sumItemsValue = items => items.reduce((total, item) => total + item.valor, 0);
-
-const sumItems = code => notas => 
-    notas
-        .$flatMap(nota => nota.itens)
-        .filter(item => item.codigo == code)
-        .reduce((total, item) => total + item.valor, 0);
 
 // partial application
     // const ehDivisivel = (divisor, divisivel) => !(divisivel % divisor);
@@ -25,11 +19,18 @@ const sumItems = code => notas =>
 export const notasService = {
     
     listAll() {
-        return fetch(API).then(handleStatus);
+        return fetch(API)
+            .then(handleStatus)
+            .catch(_ => Promise.reject('Não foi possível obter as nostas fiscais.'));
     },
 
     sumItems(code) {
-        const filterItems = partialize(filterItemsByCode, code);
-        return this.listAll().then(sumItems(code));
+        const sumItems = compose(
+            sumItemsValue, 
+            partialize(filterItemsByCode, code)(),
+            getItemsFromNotas
+        );
+
+        return this.listAll().then(sumItems);
     }
-}
+};
