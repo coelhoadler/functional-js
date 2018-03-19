@@ -6,3 +6,11 @@ export const compose = (...fns) => value =>
 
 export const takeUntil = (times, fn) => 
     () => times-- > 0 && fn();
+
+export const debounceTime = (milliseconds, fn) => {
+    let timer = 0;
+    return () => {
+        clearTimeout(timer);
+        timer = setTimeout(fn, milliseconds);
+    }
+}
