@@ -11,3 +11,7 @@ export const timeoutPromise = (milliseconds, promise) => {
     )
     return Promise.race([promise, PromiseError])
 }
+
+export const delay = milliseconds => data => 
+    new Promise((resolve, reject) =>
+        setTimeout(() => resolve(data), milliseconds));
